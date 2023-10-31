@@ -18,7 +18,7 @@ function love.load()
 end
 
 function love.update(dt)
-    local contacs = player.body.Body:getContactList()
+    local contacs = player.body:getContactList()
     local vx, vy = player.body:getLinearVelocity()
     -- Move the player left
     if love.keyboard.isDown('a') then
@@ -38,7 +38,7 @@ end
 
 function love.draw()
     love.graphics.push()
-        love.graphics.translate(player.body:getX(), player.body:getY())
+        love.graphics.translate(-player.body:getX() + love.graphics:getWidth()/2, 0)
         -- Set the color to red
         love.graphics.setColor(1, 0, 0)
 
