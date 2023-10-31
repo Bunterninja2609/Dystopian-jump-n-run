@@ -18,13 +18,14 @@ function love.load()
 end
 
 function love.update(dt)
+    local contacs = player.body.Body:getContactList()
     local vx, vy = player.body:getLinearVelocity()
     -- Move the player left
     if love.keyboard.isDown('a') then
         player.body:setX(player.body:getX() - 2)
     end
-    if love.keyboard.isDown('space') then
-        vy = vy - 9.81
+    if love.keyboard.isDown('space') and #contacs > 0 then
+        vy = vy - 10
     end
     -- Move the player right
     if love.keyboard.isDown('d') then
