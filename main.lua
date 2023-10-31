@@ -1,35 +1,48 @@
+-- Love2D Code Example with Physics and a Player Rectangle
+
+local world, player
+
 function love.load()
-    World = love.physics.newWorld(0, 10, false)
+    love.window.setTitle("Dystopian game")
+    love.window.setMode(800, 600, {resizable=true, vsync=false, minwidth=400, minheight=300})
+
+    -- Initialize the physics world
+    love.physics.setMeter(64)
+    world = love.physics.newWorld(0, 9.81 * 64, true)
+
+    -- Create a rectangle
     player = {}
-    player.body = love.physics.newBody(World, 0, 0)
-    player.hitbox = love.physics.newShape(16, 32)
-    player.fixture = love.physics.newFixture(player.body, player.hitbox)
-    player.x = player.body:getX()
-    player.y = player.body:getY()
+    player.body = love.physics.newBody(world, 200, 300, "dynamic")
+    player.shape = love.physics.newRectangleShape(50, 50)
+    player.fixture = love.physics.newFixture(player.body, player.shape)
 end
-function movePlayer(dt)
-    local contacts = player.body:getContactList()
-    local vx, vy = player.Body:getLinearVelocity()
-    if contacts# > 0 and love.keyboard.isDown("Space") then
-        vy = 20
-    end
-    if love.keyboard.isDown("d") then 
-        vx = vx + dt
-    end
-    if love.keyboard.isDown("a") then
-        vx = vx - dt
-    end
-    if vx < 30 then 
-        vx = 30
-    end
-    player.Body:setLinearVelocity(vx, vy)
-end
+
 function love.update(dt)
-    movePlayer()
-    World:update(dt)
+    local vx, vy = player.body:getLinearVelocity()
+    -- Move the player left
+    if love.keyboard.isDown('a') then
+        player.body:setX(player.body:getX() - 2)
+    end
+    if love.keyboard.isDown('space') then
+        vy = vy - 9.81
+    end
+    -- Move the player right
+    if love.keyboard.isDown('d') then
+        player.body:setX(player.body:getX() + 2)
+    end
+    player.body:setLinearVelocity(vx, vy)
+    -- Update the physics world
+    world:update(dt)
 end
 
 function love.draw()
-    love.graphics.translate(- player.x - love.graphics.getWidth()/2, 0)
-    love.graphics.rectangle("line", player.x - 8, player.y - 16, 16, 32)
+    love.graphics.push()
+        love.graphics.translate(player.body:getX(), player.body:getY())
+        -- Set the color to red
+        love.graphics.setColor(1, 0, 0)
+
+        -- Draw the player rectangle
+        love.graphics.polygon("fill", player.body:getWorldPoints(player.shape:getPoints()))
+    love.graphics.pop()
 end
+
