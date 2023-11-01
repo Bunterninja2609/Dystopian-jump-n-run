@@ -5,6 +5,7 @@ local world, player, ground
 function love.load()
 
     sti = require 'sti'
+    cam = require 'camera'
     gameMap = sti('map/map.lua')
     love.window.setTitle("Dystopian game")
     love.window.setMode(800, 600, {resizable=true, vsync=false, minwidth=400, minheight=300})
@@ -27,7 +28,7 @@ function love.load()
 end
 
 function love.update(dt)
-    local contacts = player.body:getContactList()
+    local contacts = player.body:getContacts()
     local vx, vy = player.body:getLinearVelocity()
 
     -- Move the player left
@@ -52,9 +53,11 @@ function love.update(dt)
 end
 
 function love.draw()
+    scale = 2
     love.graphics.push()
-    love.graphics.translate(-player.body:getX() + love.graphics.getWidth()/2, 0)
-    gameMap:draw()
+    
+    love.graphics.scale(scale)
+    love.graphics.translate(-player.body:getX()*scale + (love.graphics.getWidth()/2)*scale, 0)
     -- Set the color to red for the player
     love.graphics.setColor(1, 0, 0)
     -- Draw the player rectangle
@@ -64,6 +67,8 @@ function love.draw()
     love.graphics.setColor(0, 0, 1)
     -- Draw the ground rectangle
     love.graphics.polygon("fill", ground.body:getWorldPoints(ground.shape:getPoints()))
+    love.graphics.setColor(1, 1, 1)
+    gameMap:draw(0, 0)
 
     love.graphics.pop()
 end
