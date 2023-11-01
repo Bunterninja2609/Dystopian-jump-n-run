@@ -53,11 +53,11 @@ function love.update(dt)
 end
 
 function love.draw()
-    scale = 2
+    scale = 1.1
     love.graphics.push()
     
     love.graphics.scale(scale)
-    love.graphics.translate(-player.body:getX()*scale + (love.graphics.getWidth()/2)*scale, 0)
+    love.graphics.translate((-player.body:getX() + (love.graphics.getWidth()/2))/ scale, 0)
     -- Set the color to red for the player
     love.graphics.setColor(1, 0, 0)
     -- Draw the player rectangle
@@ -68,7 +68,7 @@ function love.draw()
     -- Draw the ground rectangle
     love.graphics.polygon("fill", ground.body:getWorldPoints(ground.shape:getPoints()))
     love.graphics.setColor(1, 1, 1)
-    gameMap:draw(0, 0)
+    gameMap:drawLayer(gameMap.layers["Tile Layer 1"])
 
     love.graphics.pop()
 end
