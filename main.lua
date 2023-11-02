@@ -18,9 +18,10 @@ function love.load()
     -- Create a rectangle for the player
     player = {}
     player.body = love.physics.newBody(world, 0, 80, "dynamic")
+    player.body:setFixedRotation(true)
     player.shape = love.physics.newRectangleShape(16, 16)
     player.fixture = love.physics.newFixture(player.body, player.shape)
-
+    player.fixture:setFriction(10)
     for i, obj in pairs(gameMap.layers["Object Layer 1"].objects) do
         local wall = {}
         wall.x = obj.x + obj.width / 2
@@ -60,10 +61,10 @@ function love.update(dt)
 end
 
 function love.draw()
-    local scale = 3
+    local scale = 2
     local playerX, playerY = player.body:getX(), player.body:getY()
     local translateX = screenWidth / 2 / scale - playerX
-    local translateY = screenHeight / 2 / scale - playerY
+    local translateY =  screenHeight / 2 / scale + screenHeight/2/scale - 160
 
     love.graphics.push()
     love.graphics.scale(scale)
@@ -76,6 +77,6 @@ function love.draw()
     love.graphics.setColor(1, 1, 1)
 
     gameMap:drawLayer(gameMap.layers["Tile Layer 1"])
-
+    love.graphics.circle("fill",0,0,1)
     love.graphics.pop()
 end
