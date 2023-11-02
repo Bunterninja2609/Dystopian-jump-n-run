@@ -1,30 +1,37 @@
 -- Love2D Code Example with Physics, Player Rectangle, and Ground
 
-local world, player, ground
+local world, player, walls, gameMap
+local screenWidth, screenHeight = love.graphics.getWidth(), love.graphics.getHeight()
 
 function love.load()
     love.graphics.setDefaultFilter("nearest", "nearest")
     sti = require 'sti'
-    cam = require 'camera'
     gameMap = sti('map/map.lua')
     love.window.setTitle("Dystopian game")
     love.window.setMode(800, 600, {resizable=true, vsync=false, minwidth=400, minheight=300})
-
+    walls = {}
+    
     -- Initialize the physics world
     love.physics.setMeter(64)
     world = love.physics.newWorld(0, 9.81 * 64, true)
 
     -- Create a rectangle for the player
     player = {}
-    player.body = love.physics.newBody(world, 0, 0, "dynamic")
-    player.shape = love.physics.newRectangleShape(50, 50)
+    player.body = love.physics.newBody(world, 0, -50, "dynamic")
+    player.shape = love.physics.newRectangleShape(16, 16)
     player.fixture = love.physics.newFixture(player.body, player.shape)
 
-    -- Create the ground
-    ground = {}
-    ground.body = love.physics.newBody(world, 400, 550, "static")
-    ground.shape = love.physics.newRectangleShape(800, 50)
-    ground.fixture = love.physics.newFixture(ground.body, ground.shape)
+    for i, obj in pairs(gameMap.layers["Object Layer 1"].objects) do
+        local wall = {}
+        wall.x = obj.x + obj.width / 2
+        wall.y = obj.y + obj.height / 2
+        wall.width = obj.width
+        wall.height = obj.height
+        wall.body = love.physics.newBody(world, wall.x, wall.y, "static")
+        wall.shape = love.physics.newRectangleShape(wall.width, wall.height)
+        wall.fixture = love.physics.newFixture(wall.body, wall.shape)
+        table.insert(walls, wall)
+    end
 end
 
 function love.update(dt)
@@ -33,17 +40,17 @@ function love.update(dt)
 
     -- Move the player left
     if love.keyboard.isDown('a') then
-        player.body:setX(player.body:getX() - 2)
+        vx = -100
     end
 
     -- Jump if the player is on the ground
     if love.keyboard.isDown('space') and #contacts > 0 then
-        vy = vy - 10
+        vy = vy - 5
     end
 
     -- Move the player right
     if love.keyboard.isDown('d') then
-        player.body:setX(player.body:getX() + 2)
+        vx = 100
     end
 
     player.body:setLinearVelocity(vx, vy)
@@ -53,22 +60,26 @@ function love.update(dt)
 end
 
 function love.draw()
-    scale = 1.1
+    local scale = 1.1
+    local playerX, playerY = player.body:getX(), player.body:getY()
+    local translateX = screenWidth / 2 - playerX
+    local translateY = screenHeight / 2 - playerY
+
     love.graphics.push()
-    
     love.graphics.scale(scale)
-    love.graphics.translate((-player.body:getX() + (love.graphics.getWidth()/2))/ scale, 0)
-    -- Set the color to red for the player
+    love.graphics.translate(translateX * scale, translateY)
+
     love.graphics.setColor(1, 0, 0)
     -- Draw the player rectangle
-    love.graphics.polygon("fill", player.body:getWorldPoints(player.shape:getPoints()))
+    love.graphics.rectangle("fill", playerX - 8, playerY - 8, 16, 16)
 
-    -- Set the color to blue for the ground
-    love.graphics.setColor(0, 0, 1)
-    -- Draw the ground rectangle
-    love.graphics.polygon("fill", ground.body:getWorldPoints(ground.shape:getPoints()))
     love.graphics.setColor(1, 1, 1)
+    for _, wall in ipairs(walls) do
+        love.graphics.polygon("line", wall.body:getWorldPoints(wall.shape:getPoints()))
+    end
+
     gameMap:drawLayer(gameMap.layers["Tile Layer 1"])
+    love.graphics.circle("fill", 0, 0, 1)
 
     love.graphics.pop()
 end
