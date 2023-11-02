@@ -16,7 +16,7 @@ function love.load()
 
     -- Create a rectangle for the player
     player = {}
-    player.body = love.physics.newBody(world, 200, 300, "dynamic")
+    player.body = love.physics.newBody(world, 0, 0, "dynamic")
     player.shape = love.physics.newRectangleShape(50, 50)
     player.fixture = love.physics.newFixture(player.body, player.shape)
 
