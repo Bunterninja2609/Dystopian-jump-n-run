@@ -3,7 +3,7 @@
 local world, player, ground
 
 function love.load()
-
+    love.graphics.setDefaultFilter("nearest", "nearest")
     sti = require 'sti'
     cam = require 'camera'
     gameMap = sti('map/map.lua')
