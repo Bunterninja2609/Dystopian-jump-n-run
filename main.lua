@@ -15,6 +15,8 @@ function love.load()
     love.physics.setMeter(64)
     world = love.physics.newWorld(0, 9.81 * 64, true)
 
+    background1 = love.graphics.newImage("background1.png")
+
     -- Create a rectangle for the player
     player = {}
     player.body = love.physics.newBody(world, 0, 80, "dynamic")
@@ -69,7 +71,21 @@ function love.draw()
     love.graphics.push()
     love.graphics.scale(scale)
     love.graphics.translate(translateX, translateY)
-
+    for i = 0, 10 do
+        love.graphics.setColor(0.5, 0.5, 0.5)
+        love.graphics.draw(background1, playerX/2 + i * background1:getWidth(),0)
+    end
+    for i = 0, 10 do
+        love.graphics.setColor(0.7, 0.7, 0.7)
+        love.graphics.draw(background1, playerX/4 + i * background1:getWidth(),16)
+        
+    end
+    for i = 0, 10 do
+        love.graphics.setColor(1,1,1)
+        
+        love.graphics.draw(background1, playerX/8 + i * background1:getWidth(),32 )
+    end
+    
     love.graphics.setColor(1, 0, 0)
     -- Draw the player rectangle
     love.graphics.rectangle("fill", playerX - 8, playerY - 8, 16, 16)
